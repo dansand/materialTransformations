@@ -73,6 +73,20 @@ DG = MatGraph()
 DG.add_nodes_from(material_list)
 ```
 
+We can also visualise the graph...
+
+```
+import networkx as nx
+nx.draw_circular(DG, with_labels=True)
+plt.show()
+```
+
+
+
+![alt text](graph.png )
+
+
+
 Now the graph is set up, here is how we could could add a condition. For instance, given an underworld function that returns the depth, we could specify that _matname1_ transforms to _matname2_ when the depth is less than 0.5:
 
 ```
