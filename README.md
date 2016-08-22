@@ -132,7 +132,7 @@ If multiple rules are provided for a single edge in the graph (representing the 
 
 ## Appying the conditions
 
-Once the graph nodes, edges and conditions have been applied, the graph object can generate a list of condition which can be passed through to the Underworld2 fn.branching.conditional() function. 
+Once the graph nodes, edges and conditions have been constructed, the graph object can generate a list of condition which can be passed through to the Underworld2 `fn.branching.conditional()` function. 
 
 ```
 #Build the list of conditions
@@ -142,7 +142,7 @@ DG.build_condition_list(materialVariable)
 materialVariable.data[:] = fn.branching.conditional(DG.condition_list).evaluate(gSwarm)
 ```
 
-Depending on the nature of the graph, there may be cases where multiple applications of the of fn.branching.conditional should be applied:
+Depending on the nature of the graph, there may be cases where multiple applications of the of `fn.branching.conditional()` should be applied:
 
 ```
 for i in range(2):
