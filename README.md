@@ -1,8 +1,8 @@
 ## Material transitions
 
-In geodynamic simulations it is common to impose compositional / material changes during model evolution. An example is a creation (and destruction) of crust, which is often used to help decouple the thermal boundary layers, and hence allow them to subduct in a more realistic manner. The transition from one material type to another could be a function of any number of instantaneous or history depended system variables: depth, pressure, temperature, age, accumulated strain etc. 
+In geodynamic simulations it is common to impose compositional / material changes during model evolution. An example is the creation (and destruction) of crust, which is often used to help decouple the thermal boundary layers, and hence allow them to subduct in a more realistic manner. The transition from one material type to another could be a function of any number of instantaneous or history depended system variables: depth, pressure, temperature, age, accumulated strain etc. 
 
-In the Particle in Cell method, we track material composition with an advected particle swarm. In this tutorial, we assume that each material as a unique integer index which is stored in the particel. Compositional / material changes then amount to being able to query and update the material index of each particle in the swarm. 
+In the Particle in Cell method, we track material composition with an advected particle swarm. In this tutorial, we assume that each material as a unique integer index which is stored on the particle. Compositional / material changes then amount to being able to query and update the material index of each particle in the swarm. 
 
 In Underworld2, [functions](https://github.com/underworldcode/underworld2/blob/master/docs/user_guide/05_Functions.ipynb), along with conditionals (`fn.branching.conditional`) provide an easy way to track and update materials. 
 
@@ -19,7 +19,7 @@ materialVariable.data[:] = fn.branching.conditional(Conditions).evaluate(swarm)
 
 
 
-Often, a material transition depends not only on the current condition of th particle (depth, pressure, temperature, age, accumulated strain etc. ), but also on the _current_ material type of the particle. For instance, we might allow 'mantle' material to become 'crust', but not allow harzburgite to become crust. 
+Often, a material transition depends not only on the current condition of the particle (depth, pressure, temperature, age, accumulated strain etc. ), but also on the _current_ material type of the particle. For instance, we might allow 'mantle' material to become 'crust', but not allow harzburgite to become crust. 
 
 The following expression looks reasonable:
 
@@ -50,7 +50,7 @@ combinedConditions = operator.and_((depthFn > 0.5) , indexCheck)
 
 ## Material graphs
 
-A more structured way to represent a series of material transitions is through a directed graph. In such a graph, nodes represent different material types, edges (directed) represent all possible transitions that could occur. We then need to attach conditions to those edges, and then be able to query the graph for any particle, to determine if a material transition should take place.
+A more structured way to represent a series of material transitions is through a directed graph. In such a graph, nodes represent different material types, edges (directed) represent all possible transitions that could occur.
 
 The main advantage of this approach is simply that it provides a uniform way to store and access our material model. Depending on the complexity of the material model, it may also provide a clearer way of writing the conditions for material transition.
 
@@ -89,7 +89,7 @@ plt.show()
 
 
 
-Now the graph is set up, here is how we could can add conditions for the transition form one material to a another. For instance, given an Underworld2 function (depthFn) that returns the depth, we could specify that _matname1_ transforms to _matname2_ when the depth is less than 0.5:
+Now the graph is set up, we want to add conditions for the transformation from one material to another. This is done using the `add_transition()` method. For instance, given an Underworld2 function (depthFn) that returns the depth, we could specify that _matname1_ transforms to _matname2_ when the depth is less than 0.5:
 
 ```
 DG.add_transition((matname1,matname2), depthFn, operator.lt, 0.5)
@@ -97,7 +97,7 @@ DG.add_transition((matname1,matname2), depthFn, operator.lt, 0.5)
 
 The first argument is a tuple expressing the possibiliy of a material transition from matname1 => matname2. Note that this transition is one way  (hence a directed graph); matname1 => matname2 does not imply matname2 => matname1.
 
-The next three arguments are _function_, _operator_, _value_. The Docstring for the add_transition() method describes their meaning:
+The next three arguments provide _function_, _operator_, _value_. The Docstring for the add_transition() method describes their meaning in more detail:
 
 ```
 Parameters
@@ -119,14 +119,14 @@ Parameters
 
 ## Multiple conditions
 
-Multiple conditions can be attached to a graph edge. For instance, here we can set both depth and temperature constraints on the transition:
+Multiple conditions can be attached to a graph edge. For instance, here we set both depth and temperature constraints on the transition:
 
 ```
 DG.add_transition((matname1,matname2), depthFn, operator.lt, 0.5, combineby = 'and')
 DG.add_transition((matname1,matname2), temperatureField, operator.gt, 0.5, combineby = 'and')
 ```
 
-If multiple rules are provided for a single edge in the graph (representing the material transition)  then they are applied in the sense of any condition must true ('or'), or all conditions must be true ('and'). The default is 'and'.
+If multiple rules are provided for a single edge in the graph (representing the material transition)  then they are applied in the sense of any condition can true ('or'), or all conditions must be true ('and'). The default is  all ('and').
 
 
 
@@ -135,8 +135,10 @@ If multiple rules are provided for a single edge in the graph (representing the 
 Once the graph nodes, edges and conditions have been applied, the graph object can generate a list of condition which can be passed through to the Underworld2 fn.branching.conditional() function. 
 
 ```
+#Build the list of conditions
 DG.build_condition_list(materialVariable)
 
+#evaluate the conditions and update the swarm
 materialVariable.data[:] = fn.branching.conditional(DG.condition_list).evaluate(gSwarm)
 ```
 
