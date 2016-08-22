@@ -1,6 +1,6 @@
 ## Material transitions
 
-In geodynamic simulations it is common to impose compositional / material changes during model evolution. An example is the creation (and destruction) of crust, which is often used to help decouple the thermal boundary layers, and hence allow them to subduct in a more realistic manner. The transition from one material type to another could be a function of any number of instantaneous or history depended system variables: depth, pressure, temperature, age, accumulated strain etc. 
+In geodynamic simulations it is common to impose compositional / material changes during model evolution. An example is the creation (and destruction) of crust, which is often used to help decouple the thermal boundary layers, and hence allow them to subduct in a more realistic manner. The transition from one material type to another could be a function of any number of instantaneous or history-dependent system variables: depth, pressure, temperature, age, accumulated strain etc. 
 
 In the Particle in Cell method, we track material composition with an advected particle swarm. In this tutorial, we assume that each material as a unique integer index which is stored on the particle. Compositional / material changes then amount to being able to query and update the material index of each particle in the swarm. 
 
