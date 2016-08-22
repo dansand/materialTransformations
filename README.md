@@ -85,11 +85,9 @@ plt.show()
 
 
 
-![alt text](graph.png )
+![alt text](graph1.png )
 
-
-
-Now the graph is set up, we want to add conditions for the transformation from one material to another. This is done using the `add_transition()` method. For instance, given an Underworld2 function (depthFn) that returns the depth, we could specify that _matname1_ transforms to _matname2_ when the depth is less than 0.5:
+At this stage, the graph has nodes, but no edges. Now we want to add both edges and conditions for the transformation from one material to another. This is done in one step using the `add_transition()` method. For instance, given an Underworld2 function (depthFn) that returns the depth, we could specify that _matname1_ transforms to _matname2_ when the depth is less than 0.5:
 
 ```
 DG.add_transition((matname1,matname2), depthFn, operator.lt, 0.5)
@@ -115,7 +113,16 @@ Parameters
             then they be applied in the sense of any ('or'), or all ('and')
 ```
 
+Now when we view the graph, we see the (directed) edge representing matname1 => matname2:
 
+```
+nx.draw_circular(DG, with_labels=True)
+plt.show()
+```
+
+
+
+![alt text](graph2.png )
 
 ## Multiple conditions
 
